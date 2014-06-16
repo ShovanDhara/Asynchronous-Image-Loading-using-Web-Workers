@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Image Loading...</title>
+<style>
+.showopac{display:visible;opacity: 0.1}
+.preload{background-image: url('/images/sprite.png');  background-repeat: no-repeat}
+</style>
+</head>
+
+<body>
+
+<img id="x1" src="images/test1.png" class="preload" />
+<img id="x2" src="images/test2.png" class="preload" />
+<img id="x3" src="images/test3.png" class="preload" />
+<img id="x4" src="images/test4.png" class="preload" />
+<img id="x5" src="images/test5.png" class="preload" />
+
+<script>
+                    
+				/* 
+				    Copyrights 2014 Moeen Khurshid 
+				    www.quadrantic.com 
+				*/
+
+                      var w;
+                      var e = document.getElementsByTagName("img").length;                     
+                       function nWorker(r){
+                          var en = new Worker('scripts/spawnsub.js');                         
+                          en.onmessage = function(eventx){       
+                                  document.getElementById("x" + r).setAttribute
+                                     ("style", event.data);
+                                  if(event.data == "opacity: 0.9")
+                                  {                                   
+                                    en.terminate();
+                                  }
+                          }
+                        }
+                        function startWorker()
+                        {
+                            if (typeof (Worker) !== "undefined")
+                            {
+                                if (typeof (w) == "undefined")
+                                {
+                                    w = new Worker("scripts/spawn.js");
+                                }
+                                w.onmessage = function(event) {
+                                    if (event.data > 0 && event.data < e) {
+                                        document.getElementById("x" + 
+                                        event.data).setAttribute("class", "showopac");
+                                        nWorker(event.data);
+                                    }
+                                    else {
+                                        stopWorker();
+                                    }
+                                };
+                            }
+                            else
+                            {
+                                $("img").addClass("show");
+                            }
+                        }
+                        function stopWorker()
+                       {
+                            w.terminate();
+                        }
+                        startWorker();
+  </script>
+</body>
+</html>
